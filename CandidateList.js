@@ -1,50 +1,77 @@
 import React, { useState } from 'react';
 
-const CandidateList = ({ candidates }) => {
-  const [searchSkill, setSearchSkill] = useState('');
-  const [searchLocation, setSearchLocation] = useState('');
+const CandidateManager = () => {
+  const [candidates, setCandidates] = useState([
+    { id: 1, name: 'Amit Sharma', skills: 'Python, Flask, AWS', experience: 3, location: 'Tokyo' },
+    { id: 2, name: 'Rina Patel', skills: 'JavaScript, React', experience: 2, location: 'Osaka' }
+  ]);
 
-  const filteredCandidates = candidates.filter((candidate) =>
-    candidate.skills.toLowerCase().includes(searchSkill.toLowerCase()) &&
-    candidate.location.toLowerCase().includes(searchLocation.toLowerCase())
-  );
+  const [formData, setFormData] = useState({ name: '', skills: '', experience: '', location: '' });
+  const [editId, setEditId] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.skills || !formData.experience || !formData.location) return;
+
+    if (editId) {
+      // Update
+      setCandidates((prev) =>
+        prev.map((c) => (c.id === editId ? { ...c, ...formData } : c))
+      );
+      setEditId(null);
+    } else {
+      // Add
+      const newCandidate = {
+        ...formData,
+        id: Date.now(),
+        experience: Number(formData.experience)
+      };
+      setCandidates((prev) => [...prev, newCandidate]);
+    }
+
+    setFormData({ name: '', skills: '', experience: '', location: '' });
+  };
+
+  const handleEdit = (candidate) => {
+    setFormData(candidate);
+    setEditId(candidate.id);
+  };
+
+  const handleDelete = (id) => {
+    setCandidates((prev) => prev.filter((c) => c.id !== id));
+  };
 
   return (
     <div>
+      <h2>{editId ? 'Edit Candidate' : 'Add Candidate'}</h2>
+      <form onSubmit={handleSubmit}>
+        <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
+        <input name="skills" value={formData.skills} onChange={handleChange} placeholder="Skills" required />
+        <input name="experience" type="number" value={formData.experience} onChange={handleChange} placeholder="Experience" required />
+        <input name="location" value={formData.location} onChange={handleChange} placeholder="Location" required />
+        <button type="submit">{editId ? 'Update' : 'Add'}</button>
+      </form>
+
       <h2>Candidate List</h2>
-
-      <div style={{ marginBottom: '1rem' }}>
-        <input
-          type="text"
-          placeholder="Search by skill"
-          value={searchSkill}
-          onChange={(e) => setSearchSkill(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Search by location"
-          value={searchLocation}
-          onChange={(e) => setSearchLocation(e.target.value)}
-          style={{ marginLeft: '1rem' }}
-        />
-      </div>
-
-      {filteredCandidates.length > 0 ? (
-        <ul>
-          {filteredCandidates.map((candidate, index) => (
-            <li key={index} style={{ marginBottom: '1rem' }}>
-              <strong>Name:</strong> {candidate.name}<br />
-              <strong>Skills:</strong> {candidate.skills}<br />
-              <strong>Experience:</strong> {candidate.experience} years<br />
-              <strong>Location:</strong> {candidate.location}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No matching candidates found.</p>
-      )}
+      <ul>
+        {candidates.map((candidate) => (
+          <li key={candidate.id}>
+            <strong>{candidate.name}</strong> - {candidate.skills} ({candidate.experience} yrs) - {candidate.location}
+            <div>
+              <button onClick={() => handleEdit(candidate)}>Edit</button>
+              <button onClick={() => handleDelete(candidate.id)}>Delete</button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default CandidateList;
+export default CandidateManager;
