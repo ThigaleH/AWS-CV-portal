@@ -88,5 +88,23 @@ Entities:
 
 ---
 
-## Sample Credentials for Testing
+ 1. Run Frontend (React)
+bash
+Copy
+Edit
+cd frontend
+npm install
+npm start
+# Frontend runs on: http://localhost:3000
+
+2.Run Backend (Flask)
+bash
+Copy
+Edit
+cd backend
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
+# Backend runs on: http://localhost:5000
 
