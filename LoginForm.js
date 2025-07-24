@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import './LoginForm.css'; // Optional: for styling
 
-const LoginForm = () => {
+const LoginForm = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState('');
 
   const validatePassword = (pwd) => {
@@ -26,65 +24,59 @@ const LoginForm = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch('/auth/login', {
+      const response = await fetch('http://localhost:5000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
+
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Login failed');
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
       alert('Login successful!');
+      onLoginSuccess(); // Notify App of login
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} aria-label="Login Form">
-        <h2>Login</h2>
+    <form onSubmit={handleSubmit} className="login-form">
+      <h2>Login</h2>
 
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          aria-required="true"
-        />
+      <label>Email:</label>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            validatePassword(e.target.value);
-          }}
-          required
-          aria-required="true"
-        />
-        <p className={`strength ${passwordStrength.toLowerCase()}`}>Password Strength: {passwordStrength}</p>
+      <label>Password:</label>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          validatePassword(e.target.value);
+        }}
+        required
+      />
+      <p className={`strength ${passwordStrength.toLowerCase()}`}>
+        Password Strength: {passwordStrength}
+      </p>
 
-        <label>
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          /> Remember me
-        </label>
+      <button type="submit" disabled={loading}>
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-
-        <p><a href="/forgot-password">Forgot password?</a></p>
-        {error && <p className="error">{error}</p>}
-      </form>
-    </div>
+      {error && <p className="error">{error}</p>}
+    </form>
   );
 };
 
