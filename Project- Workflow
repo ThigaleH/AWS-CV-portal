@@ -1,0 +1,28 @@
+AWS-CV-Portal/
+│
+├── 📁 frontend/                        # React frontend files
+│   ├── App.js
+│   ├── CandidateList.js
+│   ├── CvUpload.js
+│   ├── Headers.js
+│   ├── LoginForm.js
+│   ├── PasswordStrength.js
+│   ├── index.js
+│   ├── index.html
+│   └── package.json
+│
+├── 📁 backend/                         # Flask backend files
+│   ├── app.py
+│   ├── auth_helpers.py
+│   ├── config.py
+│   ├── requirements.txt
+│
+├── 📁 database/                        # SQL and schema files
+│   └── schema.sql
+│
+├── 📁 docs/                            # Project documentation
+│   ├── Architecture Diagram.docx
+│   ├── Data Flow Design.docx
+│   ├── Documentation.docx
+│
+├── README.md
