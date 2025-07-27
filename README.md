@@ -1,4 +1,4 @@
-AWS-CV-Portal/
+AWS-CV-Portal-Workflow
 │
 ├── 📁 frontend/                        # React frontend files
 │   ├── App.js
